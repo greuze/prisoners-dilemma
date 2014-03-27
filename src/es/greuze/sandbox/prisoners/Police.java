@@ -10,15 +10,16 @@ public class Police {
     final int PORT = 5000;
 
     Socket socket;
-    InputStream in;
-    OutputStream out;
+
+    BufferedReader in;
+    PrintWriter out;
 
     public void initialize() {
         // Create socket connection
         try {
             socket = new Socket(HOST, PORT);
-            out = socket.getOutputStream();
-            in = socket.getInputStream();
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
         } catch (UnknownHostException e) {
             System.out.println("Unknown host: " + HOST);
             System.exit(1);
@@ -28,19 +29,19 @@ public class Police {
         }
     }
 
-    public char requestAnswer() throws IOException {
+    public String requestAnswer() throws IOException {
         // Send data over socket
-        System.out.println("Will request next");
-        out.write('n');
+        System.out.println("Request next");
+        out.println("NEXT");
 
         // Receive text from prisoner
-        char response = (char) in.read();
+        String response = in.readLine();
         System.out.println("Text received: '" + response + "'");
 
         // Send reply to prisoner
-        char reply = 'f'; // TODO: f=free
+        String reply = "FREE";
         System.out.println("Reply : " + reply);
-        out.write(reply);
+        out.println(reply);
 
         return response;
     }
@@ -48,7 +49,7 @@ public class Police {
     public void requestExit() throws IOException {
         // Send data over socket
         System.out.println("Will request to exit");
-        out.write('x');
+        out.println("EXIT");
     }
 
     public static void main(String[] args) throws Exception {

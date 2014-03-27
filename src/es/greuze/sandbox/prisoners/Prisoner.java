@@ -10,8 +10,9 @@ public class Prisoner {
 
     ServerSocket server;
     Socket client;
-    InputStream in = null;
-    OutputStream out = null;
+
+    BufferedReader in;
+    PrintWriter out;
 
     public void initialize() {
         try {
@@ -30,8 +31,8 @@ public class Prisoner {
         }
 
         try {
-            in = client.getInputStream();
-            out = client.getOutputStream();
+            in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            out = new PrintWriter(new OutputStreamWriter(client.getOutputStream()), true);
         } catch (IOException e) {
             System.out.println("Read failed");
             System.exit(-1);
@@ -40,19 +41,24 @@ public class Prisoner {
 
     public boolean mustContinue() throws IOException {
         // Receive data from Police
-        System.out.println("Listening...");
-        char byteRead = (char) in.read();
-        System.out.println("Got '" + byteRead + "'");
+        System.out.println("Waiting instruction...");
+        String request = in.readLine();
+        System.out.println("Got '" + request + "'");
 
-        // If socket is closed, finish=true
-        return byteRead == 'n'; // TODO: Could be -1 (end of stream)
+        if ("NEXT".equals(request)) {
+            return true;
+        } else if ("EXIT".equals(request)) {
+            return false;
+        } else {
+            throw new RuntimeException("Unknown operation");
+        }
     }
 
-    public char giveAnswer(char answer) throws IOException {
+    public String giveAnswer(String answer) throws IOException {
         //Send data back to Police
-        out.write(answer);
+        out.println(answer);
 
-        return (char) in.read(); // TODO: Could be -1 (end of stream)
+        return in.readLine();
     }
 
     public static void main(String[] args) throws Exception {
@@ -60,7 +66,7 @@ public class Prisoner {
         prisoner.initialize();
 
         while (prisoner.mustContinue()) {
-            char response = prisoner.giveAnswer('s'); // TODO: s=silent
+            String response = prisoner.giveAnswer("SILENT");
             System.out.println("Got response '" + response + "' from Police");
         }
     }
