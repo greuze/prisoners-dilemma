@@ -4,29 +4,26 @@ import java.net.*;
 
 import java.io.*;
 
-public class Prisoner {
-
-    final int PORT = 5000;
-
-    ServerSocket server;
-    Socket client;
+public abstract class Prisoner {
 
     BufferedReader in;
     PrintWriter out;
 
-    public void initialize() {
+    public void initialize(int port) {
+        ServerSocket server = null;
         try {
-            server = new ServerSocket(PORT);
+            server = new ServerSocket(port);
         } catch (IOException e) {
-            System.out.println("Could not listen on port " + PORT);
+            System.out.println("Could not listen on port " + port);
             System.exit(-1);
         }
 
+        Socket client = null;
         try {
             System.out.println("Waiting...");
             client = server.accept();
         } catch (IOException e) {
-            System.out.println("Accept failed: " + PORT);
+            System.out.println("Accept failed: " + port);
             System.exit(-1);
         }
 
@@ -54,20 +51,15 @@ public class Prisoner {
         }
     }
 
-    public String giveAnswer(String answer) throws IOException {
+    protected String sendAnswer() throws IOException {
         //Send data back to Police
+        String answer = giveAnswer();
+        System.out.println("Sending '" + answer + "' to Police");
         out.println(answer);
 
         return in.readLine();
     }
 
-    public static void main(String[] args) throws Exception {
-        Prisoner prisoner = new Prisoner();
-        prisoner.initialize();
-
-        while (prisoner.mustContinue()) {
-            String response = prisoner.giveAnswer("SILENT");
-            System.out.println("Got response '" + response + "' from Police");
-        }
-    }
+    // Implement in subclases
+    public abstract String giveAnswer();
 }
