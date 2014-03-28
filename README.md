@@ -30,10 +30,10 @@ sentence of 10 years.
 
 # Examples
 
-There are two sample implemented prisoners, GentlePrisoner (that will
-talk), and EvilPrisoner (that will always try to betray the other). Both
-samples will always give the same response, as can be seen in
-`giveAnswer` overriden method.
+There are two sample implemented prisoners, `GentlePrisoner` (that will
+always talk), and `EvilPrisoner` (that will always try to betray the
+other). Both samples will always give the same response, as can be seen
+in `giveAnswer` overriden method.
 
 # Execution and results
 
