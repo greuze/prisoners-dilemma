@@ -1,15 +1,24 @@
 package es.greuze.sandbox.prisoners;
 
-import java.net.*;
-
 import java.io.*;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Police {
 
+    private static final boolean DEBUG = Boolean.FALSE;
+
     private BufferedReader in1;
     private PrintWriter out1;
+
     private BufferedReader in2;
     private PrintWriter out2;
+
+    // To calculate statistics
+    private List<String> results1 = new ArrayList<String>();
+    private List<String> results2 = new ArrayList<String>();
 
     /**
      * Initialize the Police object with connection data.
@@ -36,33 +45,115 @@ public class Police {
     /**
      * Request answer to both prisoners, and send them the result.
      */
-    public void requestAnswer() throws IOException {
+    private void requestAnswer() {
         // Send data over socket
-        System.out.println("Request next answers to both prisoners");
+        log("Request next answers to both prisoners");
         out1.println("NEXT");
         out2.println("NEXT");
 
         // Receive text from prisoners
-        String response1 = in1.readLine();
-        System.out.println("Text received from prisoner 1: '" + response1 + "'");
-        String response2 = in2.readLine();
-        System.out.println("Text received from prisoner 2: '" + response2 + "'");
+        String response1;
+        String response2;
+        try {
+            response1 = in1.readLine();
+            log("Text received from prisoner 1: '" + response1 + "'");
+            response2 = in2.readLine();
+            log("Text received from prisoner 2: '" + response2 + "'");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Calculate replies
+        String reply1;
+        String reply2;
+        if ("SILENT".equals(response1)) {
+            if ("SILENT".equals(response2)) {
+                reply1 = "MINOR";
+                reply2 = "MINOR";
+            } else if ("BETRAY".equals(response2)) {
+                reply1 = "MAJOR";
+                reply2 = "FREE";
+            } else {
+                throw new RuntimeException("Unknown response " + response2 + " from prisoner 2");
+            }
+        } else if ("BETRAY".equals(response1)) {
+            if ("SILENT".equals(response2)) {
+                reply1 = "FREE";
+                reply2 = "MAJOR";
+            } else if ("BETRAY".equals(response2)) {
+                reply1 = "MEDIUM";
+                reply2 = "MEDIUM";
+            } else {
+                throw new RuntimeException("Unknown response " + response2 + " from prisoner 2");
+            }
+        } else {
+            throw new RuntimeException("Unknown response " + response1 + " from prisoner 1");
+        }
+
+        // Store the results
+        results1.add(reply1);
+        results2.add(reply2);
 
         // Send reply to prisoners
-        String reply = "FREE"; // TODO: Replies could be different
-        System.out.println("Reply : " + reply);
-        out1.println(reply);
-        out2.println(reply);
+        log("Reply prisoner 1 : " + reply1);
+        log("Reply prisoner 2: " + reply2);
+        out1.println(reply1);
+        out2.println(reply2);
     }
 
-    public void requestExit() throws IOException {
+    private void requestExit() {
         // Send data over socket
-        System.out.println("Will request prisoners to exit");
+        log("Will request prisoners to exit");
         out1.println("EXIT");
         out2.println("EXIT");
     }
 
-    public static void main(String[] args) throws Exception {
+    private void printStatistics(int totalRounds) {
+        System.out.println("From a total of " + totalRounds + " round:");
+        System.out.println("\nPrisoner 1 results:");
+        printSingleStatistics(results1, totalRounds);
+        System.out.println("\nPrisoner 2 results:");
+        printSingleStatistics(results2, totalRounds);
+    }
+
+    private void printSingleStatistics(List<String> results, int totalRounds) {
+        int frees = 0, minors = 0, mediums = 0, majors = 0;
+        for (String result : results) {
+            if ("FREE".equals(result)) {
+                frees++;
+            } else if ("MINOR".equals(result)) {
+                minors++;
+            } else if ("MEDIUM".equals(result)) {
+                mediums++;
+            } else if ("MAJOR".equals(result)) {
+                majors++;
+            }
+        }
+        System.out.println(frees + " times free (" + (100 * frees / totalRounds) + "%)");
+        System.out.println(minors + " times minor (" + (100 * minors / totalRounds) + "%)");
+        System.out.println(mediums + " times medium (" + (100 * mediums / totalRounds) + "%)");
+        System.out.println(majors + " times major (" + (100 * majors / totalRounds) + "%)");
+
+        System.out.println("With a total of " + (majors * 10 + mediums * 5 + minors) + " years of jail");
+    }
+
+    private void log(String message) {
+        if (DEBUG) {
+            System.out.println(message);
+        }
+    }
+
+    public void startContest(int totalRounds) {
+        for (int i = 1; i <= totalRounds; i++) {
+            log("Starting round " + i);
+            requestAnswer();
+        }
+        requestExit();
+
+        printStatistics(totalRounds);
+    }
+
+    public static void main(String[] args) {
         Police police = new Police();
         int totalRounds;
 
@@ -72,14 +163,10 @@ public class Police {
                                 args[2], Integer.parseInt(args[3]));
         } else {
             // Default values
-            totalRounds = 5;
+            totalRounds = 50;
             police.initialize("localhost", 5000, "localhost", 5001);
         }
 
-        for (int i = 1; i <= totalRounds; i++) {
-            System.out.println("Starting round " + i);
-            police.requestAnswer();
-        }
-        police.requestExit();
+        police.startContest(totalRounds);
     }
 }

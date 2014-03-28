@@ -7,13 +7,14 @@ public class EvilPrisoner extends Prisoner {
         return "BETRAY";
     }
 
-    public static void main(String[] args) throws Exception {
+    @Override
+    public void notifyPoliceResponse(String response) {
+        System.out.println("EvilPrisoner got response '" + response + "' from Police");
+    }
+
+    public static void main(String[] args) {
         EvilPrisoner prisoner = new EvilPrisoner();
         prisoner.initialize(5001);
-
-        while (prisoner.mustContinue()) {
-            String response = prisoner.sendAnswer();
-            System.out.println("EvilPrisoner got response '" + response + "' from Police");
-        }
+        prisoner.startContest();
     }
 }

@@ -11,13 +11,14 @@ public class GentlePrisoner extends Prisoner {
         return "SILENT";
     }
 
-    public static void main(String[] args) throws Exception {
+    @Override
+    public void notifyPoliceResponse(String response) {
+        System.out.println("GentlePrisoner got response '" + response + "' from Police");
+    }
+
+    public static void main(String[] args) {
         GentlePrisoner prisoner = new GentlePrisoner();
         prisoner.initialize(5000);
-
-        while (prisoner.mustContinue()) {
-            String response = prisoner.sendAnswer();
-            System.out.println("GentlePrisoner got response '" + response + "' from Police");
-        }
+        prisoner.startContest();
     }
 }

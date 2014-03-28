@@ -6,8 +6,10 @@ import java.io.*;
 
 public abstract class Prisoner {
 
-    BufferedReader in;
-    PrintWriter out;
+    private static final boolean DEBUG = Boolean.FALSE;
+
+    private BufferedReader in;
+    private PrintWriter out;
 
     public void initialize(int port) {
         ServerSocket server = null;
@@ -20,7 +22,7 @@ public abstract class Prisoner {
 
         Socket client = null;
         try {
-            System.out.println("Waiting...");
+            System.out.println("Waiting for Police...");
             client = server.accept();
         } catch (IOException e) {
             System.out.println("Accept failed: " + port);
@@ -36,30 +38,53 @@ public abstract class Prisoner {
         }
     }
 
-    public boolean mustContinue() throws IOException {
+    public void startContest() {
+        while (mustContinue()) {
+            String response = sendAnswer();
+            notifyPoliceResponse(response);
+        }
+    }
+
+    private boolean mustContinue() {
         // Receive data from Police
-        System.out.println("Waiting instruction...");
-        String request = in.readLine();
-        System.out.println("Got '" + request + "'");
+        log("Waiting instruction...");
+        String request = null;
+        try {
+            request = in.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        log("Got '" + request + "'");
 
         if ("NEXT".equals(request)) {
             return true;
         } else if ("EXIT".equals(request)) {
             return false;
         } else {
-            throw new RuntimeException("Unknown operation");
+            throw new RuntimeException("Unknown operation " + request);
         }
     }
 
-    protected String sendAnswer() throws IOException {
+    private String sendAnswer() {
         //Send data back to Police
         String answer = giveAnswer();
-        System.out.println("Sending '" + answer + "' to Police");
+        log("Sending '" + answer + "' to Police");
         out.println(answer);
 
-        return in.readLine();
+        try {
+            return in.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    // Implement in subclases
+    private void log(String message) {
+        if (DEBUG) {
+            System.out.println(message);
+        }
+    }
+
+    // Implement in subclasses
     public abstract String giveAnswer();
+    public abstract void notifyPoliceResponse(String response);
 }
