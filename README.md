@@ -1,5 +1,5 @@
-Prisoner's Dilemma in Java
-==========================
+Prisoner's Dilemma
+==================
 
 Prisoner's dilemma game, to practice with Java and Scala. The purpose of
 the game is to be in jail as few as possible, depending on your answer
@@ -9,9 +9,9 @@ prisoner's dilemma itself can be found in
 
 # Implementing a Prisoner
 
-The user must only implement one class, that subclasses Prisoner, and
+The user must only implement one class, that subclasses `Prisoner`, and
 implements their abstract methods `giveAnswer` and
-`notifyPoliceResponse`.
+`notifyPoliceResponse`. Java or Scala can be used.
 
 The `giveAnswer` method will tell the Police the
 answer of the prisoner in every iteration (could and should be different
