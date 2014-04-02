@@ -1,8 +1,6 @@
 Prisoner's Dilemma in Java
 ==========================
 
-# Introduction
-
 Prisoner's dilemma game, to practice with Java and Scala. The purpose of
 the game is to be in jail as few as possible, depending on your answer
 to the Police and the other prisoner answer. More information about the
@@ -60,16 +58,16 @@ EvilPrisoner:
 From a total of 10 round:
 
 Prisoner 1 results:
-0 times free (0%)
-0 times minor (0%)
-0 times medium (0%)
-10 times major (100%)
-With a total of 100 years of jail
+0 times free (0.0%)
+0 times minor (0.0%)
+0 times medium (0.0%)
+10 times major (100.0%)
+With an average of 10.0 years of jail
 
 Prisoner 2 results:
 10 times free (100%)
 0 times minor (0%)
 0 times medium (0%)
 0 times major (0%)
-With a total of 0 years of jail
+With an average of 0.0 years of jail
 ```
