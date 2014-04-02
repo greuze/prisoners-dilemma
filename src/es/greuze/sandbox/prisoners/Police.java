@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Police {
 
-    private static final boolean DEBUG = Boolean.FALSE;
+    private static final boolean DEBUG = Boolean.TRUE;
 
     private BufferedReader in1;
     private PrintWriter out1;
@@ -133,12 +133,12 @@ public class Police {
                 majors++;
             }
         }
-        System.out.println(frees + " times free (" + (100 * frees / totalRounds) + "%)");
-        System.out.println(minors + " times minor (" + (100 * minors / totalRounds) + "%)");
-        System.out.println(mediums + " times medium (" + (100 * mediums / totalRounds) + "%)");
-        System.out.println(majors + " times major (" + (100 * majors / totalRounds) + "%)");
+        System.out.println(frees + " times free (" + (100.0 * frees / totalRounds) + "%)");
+        System.out.println(minors + " times minor (" + (100.0 * minors / totalRounds) + "%)");
+        System.out.println(mediums + " times medium (" + (100.0 * mediums / totalRounds) + "%)");
+        System.out.println(majors + " times major (" + (100.0 * majors / totalRounds) + "%)");
 
-        System.out.println("With a total of " + (majors * 10 + mediums * 5 + minors) + " years of jail");
+        System.out.println("With an average of " + (majors * 10.0 + mediums * 5 + minors) / totalRounds + " years of jail");
     }
 
     private void log(String message) {
@@ -167,7 +167,7 @@ public class Police {
                                 args[2], Integer.parseInt(args[3]));
         } else {
             // Default values
-            totalRounds = 50;
+            totalRounds = 100;
             police.initialize("localhost", 5000, "localhost", 5001);
         }
 

@@ -10,7 +10,7 @@ import java.net.Socket;
 
 public abstract class Prisoner {
 
-    private static final boolean DEBUG = Boolean.FALSE;
+    private static final boolean DEBUG = Boolean.TRUE;
 
     private BufferedReader in;
     private PrintWriter out;
