@@ -7,7 +7,10 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 
-class Prisoner {
+abstract class Prisoner {
+
+    def giveAnswer : String
+    def notifyPoliceResponse(response: String)
 
     var in : BufferedReader = null
     var out : PrintWriter = null
@@ -27,12 +30,8 @@ class Prisoner {
             println("I answer: " + answer)
             out.println(answer)
             val response = in.readLine
-            println("Police response: " + response)
+            notifyPoliceResponse(response)
         }
-    }
-    
-    def giveAnswer() : String = {
-        "SILENT"
     }
     
     def mustContinue() : Boolean = {
@@ -46,14 +45,5 @@ class Prisoner {
         } else {
             throw new RuntimeException("Unknown operation " + request);
         }
-    }
-}
-
-object PrisonerClient {
-
-    def main(args : Array[String]) {
-        val p = new Prisoner
-        p.initialize(5001)
-        p.startContest()
     }
 }
