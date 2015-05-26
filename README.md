@@ -20,16 +20,16 @@ during the game).
 When the Police have the answers from both prisoners,
 they will inform the sentence to each one. These sentences could be:
 
-* `FREE`. This prisioner talked, but the other did't. He goes free.
-* `MINOR`. Both did't talk, so both have minor sentence (1 year in jail).
+* `FREE`. This prisioner talked, but the other didn't. He goes free.
+* `MINOR`. Both didn't talk, so both have minor sentence (1 year in jail).
 * `MEDIUM`. Both talked, so the sentence is medium for both (5 years).
-* `MAJOR`. This prisoner did't talk, but the other betrayed him. Maximum
+* `MAJOR`. This prisoner didn't talk, but the other betrayed him. Maximum
 sentence of 10 years.
 
 # Examples
 
 There are two sample implemented prisoners, `GentlePrisoner` (that will
-always talk), and `EvilPrisoner` (that will always try to betray the
+never talk), and `EvilPrisoner` (that will always try to betray the
 other). Both samples will always give the same response, as can be seen
 in `giveAnswer` overriden method.
 
